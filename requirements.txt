@@ -1,0 +1,4 @@
+Django==1.6.2
+South==0.8.4
+mysql-python
+--no-index -f http://dist.plone.org/thirdparty/ -U PIL
