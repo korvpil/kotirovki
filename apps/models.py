@@ -34,7 +34,7 @@ class User(AbstractBaseUser):
     last_name = models.CharField(max_length=255)
     birth_date = models.DateField(default='1900-01-01')
 
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
@@ -64,3 +64,47 @@ class HeaderContacts(models.Model):
     class Meta:
         verbose_name = u'Информация компании'
         verbose_name_plural = u'Информация компании'
+
+
+import hashlib
+from django.utils.timezone import now
+import time
+from random import randint
+from django.conf import settings
+
+
+class EmailConfirmationManager(models.Manager):
+    def create_for_user(self, user):
+        code = hashlib.sha1(
+            '{pk}_{time}_{salt}'.format(pk=user.pk, time=time.time(), salt=randint(1, 100000))).hexdigest()
+        try:
+            confirmation = self.get(user=user)
+        except self.model.DoesNotExist:
+            # noinspection PyCallingNonCallable
+            confirmation = self.model(user=user, code=code)
+        else:
+            if (now() - confirmation.created_at).seconds > settings.EMAIL_CONFIRMATION_LIFETIME:
+                confirmation.code = code
+                confirmation.created_at = now()
+        confirmation.save()
+        return confirmation
+
+    def get_by_code(self, code):
+        confirmation = self.get(code=code)
+        if (now() - confirmation.created_at).seconds > settings.EMAIL_CONFIRMATION_LIFETIME:
+            confirmation.delete()
+            raise self.model.DoesNotExist
+        return confirmation
+
+
+class EmailConfirmation(models.Model):
+    user = models.ForeignKey(User)
+    created_at = models.DateTimeField(auto_now_add=True)
+    code = models.CharField(max_length=40, unique=True)
+
+    objects = EmailConfirmationManager()
+
+    def get_remote_url(self):
+        return settings.CONFIRM_EMAIL_LINK.format(code=self.code)
+
+

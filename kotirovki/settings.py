@@ -13,6 +13,11 @@ from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+DEFAULT_SERVER = '127.0.0.1:8000'
+EMAIL_CONFIRMATION_LIFETIME = 86400
+CONFIRM_EMAIL_LINK = 'http://' + DEFAULT_SERVER + '/email/activate?code={code}'
+RESTORE_PASSWORD_LINK = 'http://' + DEFAULT_SERVER + '/email/restore?code={code}'
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -24,8 +29,22 @@ SECRET_KEY = '7v329%q+#o%8)n4^6lw@b%qejezpdc^zko*o$(zn_%^ab2f0fn'
 DEBUG = True
 
 TEMPLATE_DEBUG = True
-
+#
 ALLOWED_HOSTS = []
+#
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#
+# # Host for sending e-mail.
+# EMAIL_HOST = 'localhost'
+#
+# # Port for sending e-mail.
+# EMAIL_PORT = 1025
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'korviinn@gmail.com'
+EMAIL_HOST_PASSWORD = 'gb521990003'
 
 
 TEMPLATE_CONTEXT_PROCESSORS = TCP + (
@@ -70,7 +89,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'kotirovki',                      # Or path to database file if using sqlite3.
         'USER': 'root',                      # Not used with sqlite3.
-        'PASSWORD': '123',                  # Not used with sqlite3.
+        'PASSWORD': 'g521990003',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
