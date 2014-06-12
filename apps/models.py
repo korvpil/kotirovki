@@ -5,6 +5,11 @@ from django.utils import timezone
 from hashlib import md5
 from os import path as op
 from time import time
+import hashlib
+from django.utils.timezone import now
+import time
+from random import randint
+from django.conf import settings
 
 
 def upload_to(instance, filename, prefix=None, unique=True):
@@ -35,8 +40,8 @@ class User(AbstractBaseUser):
     birth_date = models.DateField(default='1900-01-01')
 
     is_active = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
 
     objects = UserManager()
@@ -46,6 +51,16 @@ class User(AbstractBaseUser):
     class Meta:
         verbose_name = u'Пользователь'
         verbose_name_plural = u'Пользователи'
+
+    def has_perm(self, perm, obj=None):
+        "Does the user have a specific permission?"
+        # Simplest possible answer: Yes, always
+        return True
+
+    def has_module_perms(self, app_label):
+        "Does the user have permissions to view the app `app_label`?"
+        # Simplest possible answer: Yes, always
+        return True
 
 
 class CompanyContacts(models.Model):
@@ -64,13 +79,6 @@ class HeaderContacts(models.Model):
     class Meta:
         verbose_name = u'Информация компании'
         verbose_name_plural = u'Информация компании'
-
-
-import hashlib
-from django.utils.timezone import now
-import time
-from random import randint
-from django.conf import settings
 
 
 class EmailConfirmationManager(models.Manager):
@@ -106,5 +114,41 @@ class EmailConfirmation(models.Model):
 
     def get_remote_url(self):
         return settings.CONFIRM_EMAIL_LINK.format(code=self.code)
+
+
+class PasswordRestoreManager(models.Manager):
+    def create_for_user(self, user):
+        code = hashlib.sha1(
+            '{pk}_{time}_{salt}'.format(pk=user.pk, time=time.time(), salt=randint(1, 100000))).hexdigest()
+        try:
+            confirmation = self.get(user=user)
+        except self.model.DoesNotExist:
+            # noinspection PyCallingNonCallable
+            confirmation = self.model(user=user, code=code)
+        else:
+            if (now() - confirmation.created_at).total_seconds() > settings.RESTORE_PASSWORD_LIFETIME:
+                confirmation.code = code
+                confirmation.created_at = now()
+        confirmation.save()
+        return confirmation
+
+    def get_by_code(self, code):
+        confirmation = self.get(code=code)
+        if (now() - confirmation.created_at).total_seconds() > settings.RESTORE_PASSWORD_LIFETIME:
+            confirmation.delete()
+            raise self.model.DoesNotExist
+        return confirmation
+
+
+class PasswordRestore(models.Model):
+    user = models.ForeignKey(User)
+    created_at = models.DateTimeField(default=now())
+    code = models.CharField(max_length=40, unique=True)
+
+    objects = PasswordRestoreManager()
+
+    def get_remote_url(self):
+        return settings.RESTORE_PASSWORD_LINK.format(code=self.code)
+
 
 

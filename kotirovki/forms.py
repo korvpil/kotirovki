@@ -1,6 +1,5 @@
 __author__ = 'korvin'
 # coding: utf-8
-
 from django import forms
 from apps.models import User
 from django.contrib.auth import login as auth_login
@@ -17,10 +16,12 @@ class RegisterForm(forms.Form):
 
     def save(self):
         data = self.cleaned_data
-        password = data['password']
+        password = self.cleaned_data['password']
         del data['password']
-        user = User.objects.create_user(**data)
+        user = User.objects.create(**data)
+        user.set_password(password)
         user.save()
+
         return user
 
 
@@ -34,10 +35,9 @@ class LoginForm(forms.Form):
         password = self.cleaned_data.get('password')
 
         if username and password:
-            print username
-            print password
-            self.user_cache = authenticate(username=username, password=password)
-            if self.user_cache is None:
+            # try:
+            self.user_cache = authenticate(username=username,password=password)
+            if not self.user_cache:
                 raise forms.ValidationError("Ошибка")
             elif not self.user_cache.is_active:
                 raise forms.ValidationError('Пользователь заблокирован')
@@ -46,3 +46,16 @@ class LoginForm(forms.Form):
 
     def get_user(self):
         return self.user_cache
+
+
+class PasswordRestoreForm(forms.Form):
+    password = forms.CharField(required=True)
+    password_confirm = forms.CharField(required=True)
+
+    def clean(self):
+        password = self.cleaned_data.get('password')
+        password_confirm = self.cleaned_data.get('password_confirm')
+
+        if password_confirm != password:
+            raise forms.ValidationError("Пароли не совпадают")
+        return self.cleaned_data

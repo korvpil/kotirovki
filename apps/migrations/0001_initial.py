@@ -18,9 +18,9 @@ class Migration(SchemaMigration):
             ('first_name', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('last_name', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('birth_date', self.gf('django.db.models.fields.DateField')(default='1900-01-01')),
-            ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('is_superuser', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('is_staff', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('is_active', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('is_superuser', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('is_staff', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('date_joined', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
         ))
         db.send_create_signal(u'apps', ['User'])
@@ -50,6 +50,15 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'apps', ['EmailConfirmation'])
 
+        # Adding model 'PasswordRestore'
+        db.create_table(u'apps_passwordrestore', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['apps.User'])),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 6, 11, 0, 0))),
+            ('code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=40)),
+        ))
+        db.send_create_signal(u'apps', ['PasswordRestore'])
+
 
     def backwards(self, orm):
         # Deleting model 'User'
@@ -63,6 +72,9 @@ class Migration(SchemaMigration):
 
         # Deleting model 'EmailConfirmation'
         db.delete_table(u'apps_emailconfirmation')
+
+        # Deleting model 'PasswordRestore'
+        db.delete_table(u'apps_passwordrestore')
 
 
     models = {
@@ -85,6 +97,13 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'logo': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'})
         },
+        u'apps.passwordrestore': {
+            'Meta': {'object_name': 'PasswordRestore'},
+            'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '40'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 6, 11, 0, 0)'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['apps.User']"})
+        },
         u'apps.user': {
             'Meta': {'object_name': 'User'},
             'birth_date': ('django.db.models.fields.DateField', [], {'default': "'1900-01-01'"}),
@@ -92,9 +111,9 @@ class Migration(SchemaMigration):
             'email': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
