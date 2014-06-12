@@ -99,3 +99,9 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = 'apps.User'
+
+
+try:
+    from .local import *
+except:
+    pass

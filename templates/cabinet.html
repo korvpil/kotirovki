@@ -1,19 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title></title>
-</head>
-<body>
+{% extends "index.html" %}
 
-{% if user.is_anonymous %}
-    <a href="/login/">Авторизируйтесь.</a>
-{% endif %}
+{% block content %}
+    {% if user.is_anonymous %}
+        <a href="/login/">Авторизируйтесь.</a>
+    {% endif %}
 
-{% if user.is_authenticated %}
-cabinet
+    {% if user.is_authenticated %}
+    cabinet
 
-<a href="/logout/">Выход</a>
+    <a href="/logout/">Выход</a>
 
-{% endif %}
-</body>
-</html>
+    {% endif %}
+{% endblock content %}

@@ -12,9 +12,20 @@ from django.db import transaction
 from django.conf import settings
 
 
+class IndexView(TemplateView):
+    template_name = 'index.html'
+
+
 class RegisterView(FormView):
     form_class = RegisterForm
     template_name = 'registration.html'
+
+    # def get_context_data(self, **kwargs):
+        # if not self.request.user.is_anonymous():
+        #     return HttpResponseRedirect('/cabinet/')
+        # context = super(RegisterView, self).get_context_data()
+        # context['form'] = self.form_class
+        # return context
 
     def form_valid(self, form):
         with transaction.atomic():
