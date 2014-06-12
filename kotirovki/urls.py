@@ -17,6 +17,7 @@ urlpatterns = patterns('kotirovki.views',
     url(r'^login/', LoginView.as_view(), name='login'),
     url(r'^logout/', LogoutView.as_view(), name='logout'),
     url(r'^cabinet/', CabinetView.as_view(), name='cabinet'),
+    url(r'^grafiki/', GrafikiView.as_view(), name='grafiki'),
 
 )
 

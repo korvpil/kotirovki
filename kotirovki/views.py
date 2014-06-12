@@ -12,6 +12,12 @@ from django.db import transaction
 from django.conf import settings
 
 
+def login_req(request):
+    if request.user.is_anonymous():
+        return HttpResponseRedirect('/login/')
+    pass
+
+
 class IndexView(TemplateView):
     template_name = 'index.html'
 
@@ -133,3 +139,18 @@ def activate_account(request, code):
         return HttpResponseRedirect('/login/')
     except:
         return HttpResponseRedirect('/email/activate/')
+
+
+class GrafikiView(TemplateView):
+    template_name = 'grafiki.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(GrafikiView, self).get_context_data(**kwargs)
+        my_data_1 = [300.0, 1267.0, 60.0, 229.0, 1292.0, 13000.0, 100.0, 2411.0, 1749.0, 5058.0, 1264.0, 9414.0, 457.0]
+
+        my_data_2 = [300.0, 1267.0, 60.0, 229.0, 1292.0, 13000.0, 100.0, 2411.0, 1749.0, 5058.0, 1264.0, 9414.0, 457.0]
+
+        context['my_data_1'] = my_data_1
+        context['my_data_2'] = my_data_2
+
+        return context
