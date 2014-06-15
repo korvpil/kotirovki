@@ -64,14 +64,17 @@ class User(AbstractBaseUser):
 
 
 class CompanyContacts(models.Model):
+    description = models.TextField(max_length=128)
     phone = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
+    copywrite_footer = models.CharField(max_length=128)
 
     class Meta:
         verbose_name = u'Контакт компании'
         verbose_name_plural = u'Контакты компании'
 
 
+# Думаю можно удалить
 class HeaderContacts(models.Model):
     logo = models.ImageField(blank=True, null=True, upload_to=upload_to)
     company_title = models.CharField(max_length=255)
@@ -79,6 +82,27 @@ class HeaderContacts(models.Model):
     class Meta:
         verbose_name = u'Информация компании'
         verbose_name_plural = u'Информация компании'
+
+
+class HeaderMenu(models.Model):
+    title = models.CharField(max_length=128, verbose_name=u'Название меню')
+    url = models.CharField(max_length=128, verbose_name=u'URL')
+    logo = models.ImageField(blank=True, null=True, upload_to=upload_to, verbose_name=u'Логотип')
+    description = models.CharField(max_length=128 ,blank=True, null=True, verbose_name=u'Текстовое наполнение основного блока')
+
+    class Meta:
+        verbose_name = u'Меню в шапке'
+        verbose_name_plural = u'Меню в шапке'
+
+
+class Banners(models.Model):
+    title = models.CharField(max_length=128, blank=True, null=True, verbose_name=u'Заголовок')
+    img = models.ImageField(upload_to=upload_to, blank=True, null=True, verbose_name=u'Баннер')
+    is_left = models.BooleanField(default=True, verbose_name=u'Располагать слева?', help_text=u'Установите флажок если '
+                                                                                              u'нужно расположить'
+                                                                                              u'баннер слева.'
+                                                                                              u'Для расположения баннера'
+                                                                                              u'справа флажок устанавлить ненужно.')
 
 
 class EmailConfirmationManager(models.Manager):
@@ -149,6 +173,34 @@ class PasswordRestore(models.Model):
 
     def get_remote_url(self):
         return settings.RESTORE_PASSWORD_LINK.format(code=self.code)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

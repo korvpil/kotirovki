@@ -59,3 +59,26 @@ class PasswordRestoreForm(forms.Form):
         if password_confirm != password:
             raise forms.ValidationError("Пароли не совпадают")
         return self.cleaned_data
+
+
+class EditForm(forms.ModelForm):
+    # first_name = forms.CharField(max_length=128)
+    # last_name = forms.CharField(max_length=128)
+    # birth_date = forms.DateTimeField()
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', ]
+
+    # def save(self, commit=True):
+    #     data = self.cleaned_data
+    #     user = User(**data)
+    #     user.save()
+
+
+
+
+
+
+
+
