@@ -86,7 +86,8 @@ class HeaderContacts(models.Model):
 
 class HeaderMenu(models.Model):
     title = models.CharField(max_length=128, verbose_name=u'Название меню')
-    url = models.CharField(max_length=128, verbose_name=u'URL')
+    url = models.CharField(max_length=128, verbose_name=u'URL', help_text=u'URL необходимо вводить в формате :'
+                                                                          u' /menu_name/')
     logo = models.ImageField(blank=True, null=True, upload_to=upload_to, verbose_name=u'Логотип')
     description = models.CharField(max_length=128 ,blank=True, null=True, verbose_name=u'Текстовое наполнение основного блока')
 

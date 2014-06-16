@@ -18,7 +18,7 @@ urlpatterns = patterns('kotirovki.views',
     url(r'^logout/', LogoutView.as_view(), name='logout'),
     url(r'^cabinet/', CabinetView.as_view(), name='cabinet'),
     url(r'^grafiki/', GrafikiView.as_view(), name='grafiki'),
-    url(r'^menu/(?P<code>[a-zA-Z0-9]*)/$', MultiMenuView.as_view(), name='multi_menu_view'),
+    url(r'^menu/(?P<code>[a-zA-Z0-9_-]*)/$', MultiMenuView.as_view(), name='multi_menu_view'),
 
 )
 

@@ -22,8 +22,8 @@
         <script src="{{ STATIC_URL }}js/Vegur_300.font.js" type="text/javascript"></script>
         <script src="{{ STATIC_URL }}js/Vegur_400.font.js" type="text/javascript"></script>
         <script src="{{ STATIC_URL }}js/FF-cash.js" type="text/javascript"></script>
-{#        <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.js" type="text/javascript"></script>#}
-{#        <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js" type="text/javascript"></script>#}
+        <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.js" type="text/javascript"></script>
+        <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
     {% endblock js %}
 	<!--[if lt IE 7]>
 		<div style=' clear: both; text-align:center; position: relative;'>
@@ -59,7 +59,7 @@
                                                 <a class="multi-href" href="/registration/">Registration</a>
                                                 <form method="post">{% csrf_token %}
 {#                                                    <input class="multi-href" type="submit" name="Login" value="Login">#}
-                                                <a href="/login/" class="btn btn-large btn-primary">Login</a>
+                                                <a href="/login/" class="multi-href">Login</a>
                                                 </form>
                                             {% else %}
                                                 <a href="/logout/" class="make_button">Exit</a>
