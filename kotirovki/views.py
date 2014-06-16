@@ -76,7 +76,7 @@ class MultiMenuView(CommonData):
             context['form'] = form
             context['is_feedback'] = True
 
-        if self.kwargs['code'] == 'gaffikk':
+        if self.kwargs['code'] == 'grafik':
             try:
                 pk = self.kwargs['pk']
             except:
