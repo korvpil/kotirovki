@@ -12,6 +12,14 @@ from django.db import transaction
 from django.conf import settings
 
 
+class LoginMixin(object):
+
+    def get(self, request):
+        if request.user.is_anonymous():
+            return HttpResponseRedirect('/login/')
+        return super(LoginMixin, self).get(self, request)
+
+
 def login_req(request):
     if request.user.is_anonymous():
         return HttpResponseRedirect('/login/')
@@ -26,6 +34,7 @@ class CommonData(TemplateView):
         menu = HeaderMenu.objects.all()
         context['contacts'] = contacts
         context['menus'] = menu
+        context['form'] = ''
 
         # Данные для построения графика на всех страницах
         my_data_1 = [300.0, 1267.0, 60.0, 229.0, 1292.0, 13000.0, 100.0, 2411.0, 1749.0, 5058.0, 1264.0, 9414.0, 457.0]
@@ -57,14 +66,6 @@ class IsAuthenticated(object):
         if not request.user.is_anonymous():
             return HttpResponseRedirect('/')
         return super(IsAuthenticated, self).get(self, request)
-
-
-class LoginMixin(object):
-
-    def get(self, request):
-        if request.user.is_anonymous():
-            return HttpResponseRedirect('/login/')
-        return super(LoginMixin, self).get(self, request)
 
 
 class IndexView(CommonData, TemplateView):
@@ -124,21 +125,34 @@ class RequestRestorePassword(CommonData, TemplateView):
         return HttpResponseRedirect('/')
 
 
-class LoginView(CommonData, FormView):
+class LoginView(CommonData):
     form_class = LoginForm
     template_name = 'login.html'
 
     def get_context_data(self):
         context = super(LoginView, self).get_context_data()
-        context['form'] = LoginForm
+        context['form'] = self.form_class
         return context
 
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            if request.user and not request.user.is_anonymous():
+                raise Exception('Already login')
+            auth_login(request, form.get_user())
+            return HttpResponseRedirect('/cabinet/')
+        else:
+            print 'bad'
+
+        return super(LoginView, self).get(self)
+
     # Авторизация
-    def form_valid(self, form):
-        if self.request.user and not self.request.user.is_anonymous():
-            raise Exception('Already login')
-        auth_login(self.request, form.get_user())
-        return HttpResponseRedirect('/cabinet/')
+    # def form_valid(self, form):
+    #     print 'gere'
+    #     if self.request.user and not self.request.user.is_anonymous():
+    #         raise Exception('Already login')
+    #     auth_login(self.request, form.get_user())
+    #     return HttpResponseRedirect('/cabinet/')
 
 
 class LogoutView(View):
