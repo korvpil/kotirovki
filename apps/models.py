@@ -35,15 +35,15 @@ def upload_to(instance, filename, prefix=None, unique=True):
 class User(AbstractBaseUser):
     username = models.CharField(max_length=255, unique=True)
     email = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
     birth_date = models.DateField(default='1900-01-01')
 
     is_active = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now, verbose_name=u'Дата регистрации')
-    company = models.CharField(max_length=128, null=True, verbose_name=u'Компания')
+    company = models.CharField(max_length=128, null=True, blank=True, verbose_name=u'Компания')
 
     objects = UserManager()
     USERNAME_FIELD = 'username'
