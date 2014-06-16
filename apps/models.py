@@ -64,6 +64,17 @@ class User(AbstractBaseUser):
         return True
 
 
+class FeedBack(models.Model):
+    first_name = models.CharField(max_length=128, verbose_name=u'Имя')
+    last_name = models.CharField(max_length=128, verbose_name=u'Фамилия')
+    email = models.CharField(max_length=128, verbose_name=u'Почта')
+    text = models.TextField(max_length=255, verbose_name=u'Текст')
+
+    class Meta:
+        verbose_name = u'Обратная связь'
+        verbose_name_plural = u'Обратная связь'
+
+
 class CompanyContacts(models.Model):
     description = models.TextField(max_length=128)
     phone = models.CharField(max_length=255)
@@ -95,6 +106,42 @@ class HeaderMenu(models.Model):
     class Meta:
         verbose_name = u'Меню в шапке'
         verbose_name_plural = u'Меню в шапке'
+
+    def __unicode__(self):
+        return self.title
+
+
+class HeaderMenuContent(models.Model):
+    text_top = models.TextField(max_length=255, null=True, blank=True, verbose_name=u'Текст наверху')
+    text_bottom = models.TextField(max_length=255, null=True, blank=True, verbose_name=u'Текст внизу')
+    menu = models.ForeignKey(HeaderMenu, verbose_name=u'Контент для меню')
+
+    class Meta:
+        verbose_name = u'Контент меню'
+        verbose_name_plural = u'Контенты меню'
+
+
+class SliderImages(models.Model):
+    image = models.ImageField(upload_to=upload_to, blank=True, null=True, verbose_name=u'Картинка слайдера')
+
+    class Meta:
+        verbose_name = u'Картинка слайдера'
+        verbose_name_plural = u'Картинки слайдера'
+
+
+class StockType(models.Model):
+    title = models.CharField(max_length=128, verbose_name=u'Тип акции')
+
+    def __unicode__(self):
+        return self.title
+
+
+class StockCompany(models.Model):
+    title = models.CharField(max_length=128, verbose_name=u'Акции компании')
+    stock_type = models.ForeignKey(StockType, null=True, verbose_name=u'Тип акции')
+
+    def __unicode__(self):
+        return self.title
 
 
 class Banners(models.Model):

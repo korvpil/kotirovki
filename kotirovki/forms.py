@@ -1,7 +1,7 @@
 __author__ = 'korvin'
 # coding: utf-8
 from django import forms
-from apps.models import User
+from apps.models import *
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import authenticate
 
@@ -79,7 +79,15 @@ class EditForm(forms.ModelForm):
 
 
 
+class FeedBackForm(forms.ModelForm):
 
+    class Meta:
+        model = FeedBack
 
+    def save(self, commit=True):
+        data = self.cleaned_data
+        feedback = FeedBack(**data)
+        feedback.save()
+        return feedback
 
 

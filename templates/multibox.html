@@ -2,6 +2,75 @@
 
 {% block content %}
 
-    {{ content_text }}
+    {{ content_text.text_bottom }}
+    {% if is_feedback %}
+        <form method="post">{% csrf_token %}
+        {{ form.as_p | safe }}
+        <input type="submit" name="submit" value="submit">
+
+        </form>
+    {% endif %}
+{% if is_grafik %}
+    <form method="post">{% csrf_token %}
+
+        <select id="stock_type">
+            {% for item in items1 %}
+                <option value="{{ item.pk }}">{{ item.title }}</option>
+            {% endfor %}
+        </select>
+        <select id="stock_company">
+            {% for item in items2 %}
+                <option value="{{ item.pk }}">{{ item.title }}</option>
+            {% endfor %}
+        </select>
+    <br>
+    Интервал : <input type="date" ><br>
+
+    Формат записи в файл
+    <select>
+        <option value="0">...</option>
+        <option value="1">DATE, TIME, OPEN, HIGH, LOW, CLOSE, VOL</option>
+    </select>
+    <br>
+    <input type="submit" value="get_file">
+    </form>
+{% endif %}
+
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        var $director = $("#stock_type");
+        var $people = $("#stock_company");
+
+        $director.click(function(){
+            var e = document.getElementById("stock_type");
+            var strUser = e.options[e.selectedIndex].value;
+        });
+        $director.change(function(){
+            var val = $(this).val();
+{#            $.ajax({#}
+{#                url: '{% url "menu_graffik" "gaffikk" val%}',#}
+{#                type: 'POST',#}
+{#                contentType: 'application/json',#}
+{#                data: {"val":val},#}
+{#                dataType: 'json',#}
+{#                processData: false#}
+{#            });#}
+            window.location.href = "" + val;
+        });
+
+        $people.click(function(){
+        var e2 = document.getElementById("stock_company");
+        var strUser2 = e2.options[e2.selectedIndex].value;
+        });
+        $people.change(function(){
+        var val2 = $(this).val();
+        window.location.href = "" + val2;
+        });
+
+    });
+</script>
 
 {% endblock content %}
+

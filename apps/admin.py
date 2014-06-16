@@ -24,7 +24,29 @@ class HeaderContactsAdmin(admin.ModelAdmin):
 class HeaderMenuAdmin(admin.ModelAdmin):
     pass
 
+
+class HeaderMenuContentAdmin(admin.ModelAdmin):
+    pass
+
+
+class SliderImagesAdmin(admin.ModelAdmin):
+    pass
+
+class FeedBackAdmin(admin.ModelAdmin):
+    pass
+
+class StockTypeAdmin(admin.ModelAdmin):
+    pass
+
+class StockCompanyAdmin(admin.ModelAdmin):
+    pass
+
 admin.site.register(User, UserAdmin)
 admin.site.register(CompanyContacts, CompanyContactsAdmin)
 admin.site.register(HeaderContacts, HeaderContactsAdmin)
 admin.site.register(HeaderMenu, HeaderMenuAdmin)
+admin.site.register(SliderImages, SliderImagesAdmin)
+admin.site.register(HeaderMenuContent, HeaderMenuContentAdmin)
+admin.site.register(FeedBack, FeedBackAdmin)
+admin.site.register(StockType, StockTypeAdmin)
+admin.site.register(StockCompany, StockCompanyAdmin)

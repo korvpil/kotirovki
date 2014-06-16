@@ -19,6 +19,7 @@ urlpatterns = patterns('kotirovki.views',
     url(r'^cabinet/', CabinetView.as_view(), name='cabinet'),
     url(r'^grafiki/', GrafikiView.as_view(), name='grafiki'),
     url(r'^menu/(?P<code>[a-zA-Z0-9_-]*)/$', MultiMenuView.as_view(), name='multi_menu_view'),
+    url(r'^menu/(?P<code>[a-zA-Z0-9_-]*)/(?P<pk>[a-zA-Z0-9_-]*)$', MultiMenuView.as_view(), name='menu_graffik'),
 
 )
 
