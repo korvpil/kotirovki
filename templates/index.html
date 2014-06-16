@@ -58,9 +58,9 @@
                                             {% if user.is_anonymous %}
                                                 <a class="multi-href" href="/request/restore/password/">Password?</a>
                                                 <a class="multi-href" href="/registration/">Registration</a>
-                                                <form method="post">{% csrf_token %}
+{#                                                <form method="post">{% csrf_token %}#}
 {#                                                    <input class="multi-href" type="submit" name="Login" value="Login">#}
-                                                <a href="/login/" class="multi-href">Login</a>
+{#                                                <a href="/login/" class="multi-href">Login</a>#}
                                                 </form>
                                             {% else %}
                                                 <a href="/logout/" class="make_button">Exit</a>

@@ -53,7 +53,7 @@ class MultiMenuView(CommonData):
     def get_context_data(self, **kwargs):
         context = super(MultiMenuView, self).get_context_data()
         try:
-            menu_type = HeaderMenu.objects.get(title=self.kwargs['code'])
+            menu_type = HeaderMenu.objects.get(url='/'+self.kwargs['code']+'/')
         except:
             return HttpResponseRedirect('/')
         context['content_text'] = menu_type.description
