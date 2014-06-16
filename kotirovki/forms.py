@@ -8,9 +8,10 @@ from django.contrib.auth import authenticate
 
 class RegisterForm(forms.Form):
     username = forms.CharField()
-    # first_name = forms.CharField()
-    # last_name = forms.CharField()
+    first_name = forms.CharField()
+    last_name = forms.CharField()
     # phone = forms.CharField()
+    company = forms.CharField()
     email = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 

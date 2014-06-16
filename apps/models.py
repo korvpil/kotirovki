@@ -42,7 +42,8 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(default=timezone.now)
+    date_joined = models.DateTimeField(default=timezone.now, verbose_name=u'Дата регистрации')
+    company = models.CharField(max_length=128, null=True, verbose_name=u'Компания')
 
     objects = UserManager()
     USERNAME_FIELD = 'username'
