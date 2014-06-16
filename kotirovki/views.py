@@ -47,7 +47,7 @@ class CommonData(TemplateView):
         return context
 
 
-class MultiMenuView(CommonData, TemplateView):
+class MultiMenuView(CommonData):
     template_name = 'multibox.html'
 
     def get_context_data(self, **kwargs):

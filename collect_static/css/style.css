@@ -41,8 +41,8 @@ p {margin-bottom:18px}
 .buttons a:hover {cursor:pointer}
 .menu li a, .list-1 li a, .list-2 li a, .link, .button, .logo {text-decoration:none}
 /*header*/
-header {width:100%;padding-bottom:44px;margin-bottom:-30px}
-	#page1 header {min-height:600px;background:url(../images/header-bg.jpg) center top no-repeat}
+/*header {width:100%;padding-bottom:44px;margin-bottom:-30px}*/
+	/*#page1 header {min-height:600px;background:url(../images/header-bg.jpg) center top no-repeat}*/
 /* menu */
 .menu-row {width:100%;background:url(../images/menu-tail.png) center top repeat-x}
 .menu {padding:0;width:100%}
