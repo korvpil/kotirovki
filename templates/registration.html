@@ -5,6 +5,7 @@
 
         <form method="post">{% csrf_token %}
             {{ form.as_p | safe }}
+            {{ errors }}<br>
 
             <input type="submit" name="submit">
 {#            <a href="/login/">Отправить</a>#}

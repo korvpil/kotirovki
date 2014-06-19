@@ -8,10 +8,10 @@ from django.contrib.auth import authenticate
 
 class RegisterForm(forms.Form):
     username = forms.CharField()
-    first_name = forms.CharField(required=False)
-    last_name = forms.CharField(required=False)
+    first_name = forms.CharField(required=True)
+    last_name = forms.CharField(required=True)
     # phone = forms.CharField()
-    company = forms.CharField(required=False)
+    company = forms.CharField(required=True)
     email = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
@@ -27,7 +27,7 @@ class RegisterForm(forms.Form):
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField()
+    username = forms.CharField(error_messages={'username':'Обязательное поле'})
     password = forms.CharField(widget=forms.PasswordInput)
     user_cache = None
 
@@ -39,7 +39,7 @@ class LoginForm(forms.Form):
             # try:
             self.user_cache = authenticate(username=username,password=password)
             if not self.user_cache:
-                raise forms.ValidationError("Ошибка")
+                raise forms.ValidationError("Ошибка, неверный логин или пароль")
             elif not self.user_cache.is_active:
                 raise forms.ValidationError('Пользователь заблокирован')
 

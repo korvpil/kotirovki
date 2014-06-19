@@ -102,6 +102,7 @@ class HeaderMenu(models.Model):
                                                                           u' /menu_name/')
     logo = models.ImageField(blank=True, null=True, upload_to=upload_to, verbose_name=u'Логотип')
     description = models.CharField(max_length=128 ,blank=True, null=True, verbose_name=u'Текстовое наполнение основного блока')
+    sort = models.PositiveIntegerField(default=0, verbose_name=u'Сортировка')
 
     class Meta:
         verbose_name = u'Меню в шапке'

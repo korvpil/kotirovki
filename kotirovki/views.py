@@ -31,16 +31,14 @@ class CommonData(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(CommonData, self).get_context_data()
         contacts = CompanyContacts.objects.get(id=1)
-        menu = HeaderMenu.objects.all()
+        menu = HeaderMenu.objects.all().order_by('sort')
         context['contacts'] = contacts
         context['menus'] = menu
         context['form'] = ''
         try:
             code = self.kwargs['code']
             context['is_grafik'] = True
-            print 'good'
         except:
-            print 'bad'
             context['is_grafik'] = False
         print 'here'
 
@@ -87,9 +85,11 @@ class MultiMenuView(CommonData):
             context['items1'] = StockType.objects.all()
             context['items2'] = stock_company
         context['content_text'] = content
+        if 'errors' in kwargs:
+            context['errors'] = kwargs['errors']
         return context
 
-    def post(self, request, code):
+    def post(self, request, code, **kwargs):
         form = FeedBackForm(request.POST)
         if form.is_valid():
             with transaction.atomic():
@@ -102,8 +102,9 @@ class MultiMenuView(CommonData):
                 msg = EmailMessage('email_confirmation', text, 'asf@mail.com', ["pilgrim.04@yandex.ru"])
                 msg.content_subtype = "html"
                 msg.send()
-
-        return super(MultiMenuView, self).get(self, request, code)
+        else:
+            kwargs['errors'] = "Ошибка. Заполните все поля!"
+        return super(MultiMenuView, self).get(self, request, code, **kwargs)
 
 
 class IsAuthenticated(object):
@@ -135,6 +136,8 @@ class RegisterView(CommonData, IsAuthenticated, FormView):
         #     return HttpResponseRedirect('/cabinet/')
         context = super(RegisterView, self).get_context_data()
         context['form'] = self.form_class
+        if 'errors' in kwargs:
+            context['errors'] = kwargs['errors']
         return context
 
     def form_valid(self, form):
@@ -148,7 +151,11 @@ class RegisterView(CommonData, IsAuthenticated, FormView):
             msg.content_subtype = "html"
             msg.send()
         return HttpResponseRedirect('/logout/')
+        # return super(RegisterView, self).form_valid(form)
 
+    def form_invalid(self, form, *args, **kwargs):
+        kwargs['errors'] = 'Ошибка. Заполните все поля'
+        return super(RegisterView, self).get(self, **kwargs)
 
 class RequestRestorePassword(CommonData, TemplateView):
     template_name = 'request_restore_password.html'
@@ -187,22 +194,28 @@ class LoginView(CommonData):
     form_class = LoginForm
     template_name = 'login.html'
 
-    def get_context_data(self):
+    def get_context_data(self, *args, **kwargs):
         context = super(LoginView, self).get_context_data()
-        context['form'] = self.form_class
+        print kwargs
+        context['form'] = LoginForm()
+        if 'errors' in kwargs:
+            context['errors'] = kwargs['errors']
         return context
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
             if request.user and not request.user.is_anonymous():
-                raise Exception('Already login')
+                return HttpResponseRedirect('/cabinet/')
             auth_login(request, form.get_user())
             return HttpResponseRedirect('/cabinet/')
         else:
-            print 'bad'
-
-        return super(LoginView, self).get(self)
+            # print 'not valid'
+            # print form
+            #
+            # print form.cleaned_data
+            kwargs['errors'] = "Ошибка введите верные данные"
+        return super(LoginView, self).get(self, request, *args, **kwargs)
 
     # Авторизация
     # def form_valid(self, form):
