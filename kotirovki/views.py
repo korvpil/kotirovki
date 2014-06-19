@@ -160,12 +160,19 @@ class RegisterView(CommonData, IsAuthenticated, FormView):
 class RequestRestorePassword(CommonData, TemplateView):
     template_name = 'request_restore_password.html'
 
-    def post(self, request):
+    def get_context_data(self, *args, **kwargs):
+        context = super(RequestRestorePassword, self).get_context_data(self, *args, **kwargs)
+        if 'errors' in kwargs:
+            context['errors'] = kwargs['errors']
+        return context
+
+    def post(self, request, *args, **kwargs):
         email = request.POST.get('restore_email')
         try:
             user = User.objects.get(email=unicode(email))
         except:
-            raise
+            kwargs['errors'] = 'Ошибка! Такой почты не зарегистрировано!'
+            return super(RequestRestorePassword, self).get(self, request, *args, **kwargs)
         password_restore = PasswordRestore.objects.create_for_user(user)
 
         text = 'http://{domain}/password/restore/{code}/'.format(domain=settings.DEFAULT_SERVER,
