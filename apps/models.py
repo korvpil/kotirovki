@@ -33,10 +33,10 @@ def upload_to(instance, filename, prefix=None, unique=True):
 
 
 class User(AbstractBaseUser):
-    username = models.CharField(max_length=255, unique=True)
-    email = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255, null=True, blank=True)
-    last_name = models.CharField(max_length=255, null=True, blank=True)
+    username = models.CharField(max_length=255, unique=True, verbose_name=u'Логин пользователя')
+    email = models.CharField(max_length=255, verbose_name=u'Электронный адрес')
+    first_name = models.CharField(max_length=255, null=True, blank=True,verbose_name=u'Имя пользователя')
+    last_name = models.CharField(max_length=255, null=True, blank=True, verbose_name=u'Фамилия пользователя')
     birth_date = models.DateField(default='1900-01-01')
 
     is_active = models.BooleanField(default=False)
@@ -65,10 +65,10 @@ class User(AbstractBaseUser):
 
 
 class FeedBack(models.Model):
-    first_name = models.CharField(max_length=128, verbose_name=u'Имя')
-    last_name = models.CharField(max_length=128, verbose_name=u'Фамилия')
-    email = models.CharField(max_length=128, verbose_name=u'Почта')
-    text = models.TextField(max_length=255, verbose_name=u'Текст')
+    first_name = models.CharField(max_length=128, verbose_name=u'Имя', blank=True)
+    last_name = models.CharField(max_length=128, verbose_name=u'Фамилия', blank=True)
+    email = models.CharField(max_length=128, verbose_name=u'Почта', blank=True)
+    text = models.TextField(max_length=255, verbose_name=u'Текст', blank=True)
 
     class Meta:
         verbose_name = u'Обратная связь'

@@ -9,9 +9,19 @@
 {% block content %}
 <form  method="post">{% csrf_token %}
 
-    {{ form.as_p | safe }}
+{#    <input type="text" name="username">#}
+{#    {{ errors.username }}#}
+{#    <input type="text" name="password">#}
+
+    {% for field in form %}
+        <br>
+        {{ field.errors }}<br>
+        {{ field.label_tag }}<br>
+        {{ field }}<br>
+{#    {{ form.as_p | safe }}#}
 {#    {{ form.errors }}#}
-    {{ errors }}<br>
+{#    {{ errors }}<br>#}
+    {% endfor %}
     <input name="submit" type="submit">
     <a href="/request/restore/password">Забыли пароль?</a>
 

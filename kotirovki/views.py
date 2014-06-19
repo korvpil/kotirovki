@@ -70,7 +70,7 @@ class MultiMenuView(CommonData):
         context['is_feedback'] = False
         context['is_grafik'] = False
         if self.kwargs['code'] == 'feedback':
-            form = FeedBackForm()
+            form = FeedBackForm(self.request.POST)
             context['form'] = form
             context['is_feedback'] = True
 
@@ -135,7 +135,7 @@ class RegisterView(CommonData, IsAuthenticated, FormView):
         # if not self.request.user.is_anonymous():
         #     return HttpResponseRedirect('/cabinet/')
         context = super(RegisterView, self).get_context_data()
-        context['form'] = self.form_class
+        context['form'] = RegisterForm(self.request.POST)
         if 'errors' in kwargs:
             context['errors'] = kwargs['errors']
         return context
@@ -203,10 +203,9 @@ class LoginView(CommonData):
 
     def get_context_data(self, *args, **kwargs):
         context = super(LoginView, self).get_context_data()
-        print kwargs
-        context['form'] = LoginForm()
-        if 'errors' in kwargs:
-            context['errors'] = kwargs['errors']
+        context['form'] = LoginForm(self.request.POST)
+        # if 'errors' in kwargs:
+        #     context['errors'] = kwargs['errors']
         return context
 
     def post(self, request, *args, **kwargs):
@@ -217,11 +216,15 @@ class LoginView(CommonData):
             auth_login(request, form.get_user())
             return HttpResponseRedirect('/cabinet/')
         else:
-            # print 'not valid'
-            # print form
-            #
-            # print form.cleaned_data
-            kwargs['errors'] = "Ошибка введите верные данные"
+            # error = {}
+            print form
+            # if form.cleaned_data['username']:
+            #     error = dict(error.items() +{'username':'Такого пользователя не существует'}.items())
+            # if form.cleaned_data['password']:
+            #     error = dict(error.items() +{'password':'Введите правильный пароль'}.items())
+            # else:
+            #     error = {'password': 'Заполните поле password', 'username': 'Заполните поле username'}
+            # kwargs['errors'] = error
         return super(LoginView, self).get(self, request, *args, **kwargs)
 
     # Авторизация
@@ -272,25 +275,37 @@ class PasswordRestoreView(CommonData ,TemplateView):
         return super(PasswordRestoreView, self).get(self, *args, **kwargs)
 
 
-class CabinetView(CommonData ,FormView):
+class CabinetView(CommonData):
     form_class = EditForm
     template_name = 'cabinet.html'
 
     def get_context_data(self, **kwargs):
         if self.request.user.is_anonymous():
-            return HttpResponseRedirect('login/')
-
-
+            return HttpResponseRedirect('/login/')
         context = super(CabinetView, self).get_context_data()
-        context['form'] = self.form_class
+
+        context['form'] = EditForm(instance=self.request.user)
+        if 'errors' in kwargs:
+            context['errors'] = kwargs['errors']
         return context
 
-    def form_valid(self, form):
-        user = self.request.user
-        user.first_name = form.cleaned_data.get('first_name')
-        user.last_name = form.cleaned_data.get('last_name')
-        user.save()
-        return super(CabinetView, self).get(self)
+    def post(self, request, *args, **kwargs):
+        form = EditForm(request.POST)
+        if form.is_valid():
+            user = self.request.user
+            user.first_name = form.cleaned_data.get('first_name')
+            user.last_name = form.cleaned_data.get('last_name')
+            user.save()
+        else:
+            kwargs['errors'] = 'Поле должно быть заполнено'
+        return super(CabinetView, self).get(self, request, *args, **kwargs)
+
+    # def form_valid(self, form):
+    #     user = self.request.user
+    #     user.first_name = form.cleaned_data.get('first_name')
+    #     user.last_name = form.cleaned_data.get('last_name')
+    #     user.save()
+    #     return super(CabinetView, self).get(self)
 
 
 # Активация аккаунта

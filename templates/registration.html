@@ -4,8 +4,13 @@
     {% block content %}
 
         <form method="post">{% csrf_token %}
-            {{ form.as_p | safe }}
-            {{ errors }}<br>
+            {% for field in form %}
+                {{ field.errors }}<br>
+                {{ field.label_tag }}<br>
+                {{ field }}<br>
+            {% endfor %}
+{#            {{ for.name_of_field | safe }}#}
+{#            {{ errors }}<br>#}
 
             <input type="submit" name="submit">
 {#            <a href="/login/">Отправить</a>#}
