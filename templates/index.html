@@ -3,6 +3,23 @@
 <head>
 	<title></title>
 	<meta charset="utf-8">
+    {% block errors_css %}
+    <style type="text/css">
+        ul.errorlist {
+            margin: 0;
+            padding: 0;
+        }
+        .errorlist li {
+            background-color: red;
+    {#        color: red;#}
+            display: block;
+            font-size: 10px;
+            margin: 0 0 3px;
+            padding: 4px 5px;
+        }
+        </style>
+
+    {% endblock %}
     {% block css %}
         <link rel="stylesheet" href="{{ STATIC_URL }}css/reset.css" type="text/css" media="screen">
         <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css" type="text/css" media="screen">
