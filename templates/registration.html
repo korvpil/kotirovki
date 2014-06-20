@@ -1,13 +1,28 @@
 {% extends "index.html" %}
 
 {% if user.is_anonymous %}
+
     {% block content %}
+    <style type="text/css">
+    ul.errorlist {
+        margin: 0;
+        padding: 0;
+    }
+    .errorlist li {
+        background-color: red;
+{#        color: red;#}
+        display: block;
+        font-size: 10px;
+        margin: 0 0 3px;
+        padding: 4px 5px;
+    }
+    </style>
 
         <form method="post">{% csrf_token %}
             {% for field in form %}
-                {{ field.errors }}<br>
                 {{ field.label_tag }}<br>
-                {{ field }}<br>
+                {{ field.errors }}
+                {{ field }}<br><br>
             {% endfor %}
 {#            {{ for.name_of_field | safe }}#}
 {#            {{ errors }}<br>#}

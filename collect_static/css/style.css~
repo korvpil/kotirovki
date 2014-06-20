@@ -143,10 +143,6 @@ footer {width:100%;color:#fff;padding:0px 0 0px}
 		.list-services li a.item-3 {background-position:-50px 0}
 		.list-services li a.item-4 {background-position:-75px 0}
 
-ul.errorlist {color: #181818;}
-li {
-background-color: red;
-}
 
 /*.ui-jcoverflip {*/
     /*position: relative;*/

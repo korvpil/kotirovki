@@ -70,7 +70,10 @@ class MultiMenuView(CommonData):
         context['is_feedback'] = False
         context['is_grafik'] = False
         if self.kwargs['code'] == 'feedback':
-            form = FeedBackForm(self.request.POST)
+            if 'post' in kwargs:
+                form = FeedBackForm(self.request.POST)
+            else:
+                form = FeedBackForm()
             context['form'] = form
             context['is_feedback'] = True
 
@@ -104,6 +107,7 @@ class MultiMenuView(CommonData):
                 msg.send()
         else:
             kwargs['errors'] = "Ошибка. Заполните все поля!"
+            kwargs['post'] = True
         return super(MultiMenuView, self).get(self, request, code, **kwargs)
 
 
@@ -127,7 +131,7 @@ class IndexView(CommonData, TemplateView):
     #     return None
 
 
-class RegisterView(CommonData, IsAuthenticated, FormView):
+class RegisterView(CommonData, IsAuthenticated):
     form_class = RegisterForm
     template_name = 'registration.html'
 
@@ -135,22 +139,40 @@ class RegisterView(CommonData, IsAuthenticated, FormView):
         # if not self.request.user.is_anonymous():
         #     return HttpResponseRedirect('/cabinet/')
         context = super(RegisterView, self).get_context_data()
-        context['form'] = RegisterForm(self.request.POST)
+        if 'errors' in kwargs:
+            context['form'] = RegisterForm(self.request.POST)
+        else:
+            context['form'] = RegisterForm()
         if 'errors' in kwargs:
             context['errors'] = kwargs['errors']
         return context
 
-    def form_valid(self, form):
-        # form.save()
-        with transaction.atomic():
-            # Формирование письма активации аккаунта
-            email_confirm = EmailConfirmation.objects.create_for_user(form.save())
-            text = 'http://{domain}/email/activate/{code}/'.format(domain=settings.DEFAULT_SERVER,
-                                                                   code=email_confirm.code)
-            msg = EmailMessage('email_confirmation', text, 'asf@mail.com', [email_confirm.user.email])
-            msg.content_subtype = "html"
-            msg.send()
-        return HttpResponseRedirect('/logout/')
+    def post(self, request, *args, **kwargs):
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            with transaction.atomic():
+                email_confirm = EmailConfirmation.objects.create_for_user(form.save())
+                text = 'http://{domain}/email/activate/{code}/'.format(domain=settings.DEFAULT_SERVER,
+                                                                       code=email_confirm.code)
+                msg = EmailMessage('email_confirmation', text, 'asf@mail.com', [email_confirm.user.email])
+                msg.content_subtype = "html"
+                msg.send()
+                return HttpResponseRedirect('/logout/')
+        else:
+            kwargs['errors'] = True
+            return super(RegisterView, self).get(self, request, *args, **kwargs)
+
+    # def form_valid(self, form):
+    #     form.save()
+        # with transaction.atomic():
+        #     Формирование письма активации аккаунта
+            # email_confirm = EmailConfirmation.objects.create_for_user(form.save())
+            # text = 'http://{domain}/email/activate/{code}/'.format(domain=settings.DEFAULT_SERVER,
+            #                                                        code=email_confirm.code)
+            # msg = EmailMessage('email_confirmation', text, 'asf@mail.com', [email_confirm.user.email])
+            # msg.content_subtype = "html"
+            # msg.send()
+        # return HttpResponseRedirect('/logout/')
         # return super(RegisterView, self).form_valid(form)
 
     def form_invalid(self, form, *args, **kwargs):
@@ -203,7 +225,10 @@ class LoginView(CommonData):
 
     def get_context_data(self, *args, **kwargs):
         context = super(LoginView, self).get_context_data()
-        context['form'] = LoginForm(self.request.POST)
+        if 'errors' in kwargs:
+            context['form'] = LoginForm(self.request.POST)
+        else:
+            context['form'] = LoginForm()
         # if 'errors' in kwargs:
         #     context['errors'] = kwargs['errors']
         return context
@@ -224,7 +249,7 @@ class LoginView(CommonData):
             #     error = dict(error.items() +{'password':'Введите правильный пароль'}.items())
             # else:
             #     error = {'password': 'Заполните поле password', 'username': 'Заполните поле username'}
-            # kwargs['errors'] = error
+            kwargs['errors'] = True
         return super(LoginView, self).get(self, request, *args, **kwargs)
 
     # Авторизация
@@ -283,10 +308,12 @@ class CabinetView(CommonData):
         if self.request.user.is_anonymous():
             return HttpResponseRedirect('/login/')
         context = super(CabinetView, self).get_context_data()
-
-        context['form'] = EditForm(instance=self.request.user)
-        if 'errors' in kwargs:
-            context['errors'] = kwargs['errors']
+        if 'post' in kwargs:
+            context['form'] = EditForm(self.request.POST ,instance=self.request.user)
+        else:
+            context['form'] = EditForm(instance=self.request.user)
+        # if 'errors' in kwargs:
+        #     context['errors'] = kwargs['errors']
         return context
 
     def post(self, request, *args, **kwargs):
@@ -297,7 +324,8 @@ class CabinetView(CommonData):
             user.last_name = form.cleaned_data.get('last_name')
             user.save()
         else:
-            kwargs['errors'] = 'Поле должно быть заполнено'
+            # kwargs['errors'] = 'Поле должно быть заполнено'
+            kwargs['post'] = True
         return super(CabinetView, self).get(self, request, *args, **kwargs)
 
     # def form_valid(self, form):
